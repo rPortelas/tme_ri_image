@@ -4,6 +4,7 @@ import java.util.List;
 import upmc.ri.io.*;
 import upmc.ri.index.*;
 import upmc.ri.struct.*;
+import upmc.ri.utils.*;
 import java.util.ArrayList;
 
 public class MainImage {
@@ -32,11 +33,13 @@ public class MainImage {
 				e.printStackTrace();
 			}
 			
+			//iterate over images to construct train and test lists
 			int cpt=0;
 			Iterator<ImageFeatures> image_it = F.iterator();
 			while (image_it.hasNext()) {
 				ImageFeatures ft = image_it.next();
 				
+				//get normalized bag of words
 				double[] bow = VIndexFactory.computeBow(ft);
 				STrainingSample<double[],String> data_sample = new STrainingSample<double[], String>(bow, label);
 				if(cpt<800){	
@@ -46,11 +49,11 @@ public class MainImage {
 					listTest.add(data_sample);
 				}
 				cpt+=1;
-				
 			}
-			
-			
 		}
+		//create dataset then run PCA on it to reduce sample dimension to 250 components
+		DataSet<double[],String> dSet = new DataSet<double[],String>(listTrain, listTest);
+		PCA.computePCA(dSet , 250);
 		
 	}
 
