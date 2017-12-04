@@ -8,9 +8,8 @@ import upmc.ri.utils.VectorOperations;
 
 public class LinearStructModel_Ex<X, Y> extends LinearStructModel<X, Y> {
 
-	public LinearStructModel_Ex(int dim_params) {
-		super(dim_params);
-		// TODO Auto-generated constructor stub
+	public LinearStructModel_Ex(int dim_params, IStructInstantiation<X, Y> Inst) {
+		super(dim_params, Inst);
 	}
 
 	@Override
@@ -52,12 +51,5 @@ public class LinearStructModel_Ex<X, Y> extends LinearStructModel<X, Y> {
 		}
 		assert(best_score != (-1 * Double.MAX_VALUE));
 		return best_y;
-	}
-
-	@Override
-	public IStructInstantiation<X, Y> instantiation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	}	
 }

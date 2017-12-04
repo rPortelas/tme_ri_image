@@ -4,6 +4,7 @@ import upmc.ri.struct.model.*;
 import upmc.ri.struct.instantiation.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 
 public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 
+	//public static final int graph_step = 200;
 	Evaluator<X, Y> Ev;
 	
 	double eta; //should we choose it here ?
@@ -28,8 +30,8 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		this.lambda = regul_rate;
 		this.T = epochs_nb;
 		this.Ev = Ev;
-	
-		//instantiate, whatever it means
+		
+		//get Instantiation object
 		IStructInstantiation <X,Y> Inst = model.instantiation();
 
 		//init random obj
@@ -37,34 +39,31 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		
 		this.w = model.getParameters();
 		this.N = lts.size(); //size of train dataset, maybe ?
-		
-		//T = number of epochs, should we choose it here ?
-		
-		
+		System.out.println(N);
+
 		for(int e = 0; e < this.T; e++) {
 			for (int it = 0; it < N; it++) {
-				STrainingSample<X, Y> TSample = lts.get(rand.nextInt(N + 1));
+				STrainingSample<X, Y> TSample = lts.get(rand.nextInt(N));
 				X x_i = TSample.input;
 				Y y_i = TSample.output;
 				
 				//compute prediction
 				Y y_hat = model.lai(TSample);
-				
+
 				//compute grad
 				double[] grad = VectorOperations.substract(Inst.psi(x_i, y_hat), Inst.psi(x_i, y_i));
-				
-				//compute cost
-				double loss = convex_loss(TSample, y_hat, w, Inst, model);
-				System.out.println(loss);
 				
 				//update w
 				for (int k = 0; k < this.w.length; k++) {
 					this.w[k] = this.w[k] - this.eta * (this.lambda * this.w[k] + grad[k]);
 				}
-				
-				//evaluate model
-				Ev.evaluate();
 			}
+			//Eval model
+			//double loss = convex_loss(TSample, y_hat, this.w, Inst, model);
+			Ev.evaluate();
+			System.out.println("Epoch: " + e);
+			System.out.println("Loss on train = " + Ev.getErr_train());
+			System.out.println("Loss on test = " + Ev.getErr_test());
 		}
 	}
 	

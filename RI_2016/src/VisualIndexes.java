@@ -53,9 +53,8 @@ public class VisualIndexes {
 		}
 		//create dataset then run PCA on it to reduce sample dimension to pca_dim components
 		DataSet<double[],String> dSet = new DataSet<double[],String>(listTrain, listTest);
-		PCA.computePCA(dSet , pca_dim);
 		
-		return dSet;	
+		return PCA.computePCA(dSet , pca_dim);	
 	}
 
 }
