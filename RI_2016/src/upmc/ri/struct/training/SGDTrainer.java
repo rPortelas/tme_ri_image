@@ -16,18 +16,19 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 
 	Evaluator<X, Y> Ev;
 	
-	double eta = 0.01; //should we choose it here ?
-	double lambda = 0.9; //same
-	int T = 1; //epoch number
+	double eta; //should we choose it here ?
+	double lambda; //same
+	int T; //epoch number
 	int N; //data size
 	double[] w;
 	
 	
-	public void train(List<STrainingSample<X, Y>> lts, IStructModel<X, Y> model) {
-		//init evaluation BTW HOW TO GET TEST LIST ?
-		Ev.setListtrain(lts);
-		Ev.setModel(model);
-		
+	public void train(List<STrainingSample<X, Y>> lts, IStructModel<X, Y> model, int epochs_nb, double learning_rate, double regul_rate, Evaluator<X,Y> Ev) {
+		this.eta = learning_rate;
+		this.lambda = regul_rate;
+		this.T = epochs_nb;
+		this.Ev = Ev;
+	
 		//instantiate, whatever it means
 		IStructInstantiation <X,Y> Inst = model.instantiation();
 
@@ -94,6 +95,10 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		perf_part /= this.N;
 		
 		return regul_part + perf_part;
+	}
+
+	public void train(List<STrainingSample<X, Y>> lts, IStructModel<X, Y> model) {
+		System.out.println("SHOULD NOT BE CALLED");
 	}
 
 }
