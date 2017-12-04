@@ -6,6 +6,7 @@ import upmc.ri.struct.Evaluator;
 import upmc.ri.struct.STrainingSample;
 import upmc.ri.struct.instantiation.IStructInstantiation;
 import upmc.ri.struct.instantiation.MultiClass;
+import upmc.ri.struct.instantiation.MultiClassHier;
 import upmc.ri.struct.model.IStructModel;
 import upmc.ri.struct.model.LinearStructModel_Ex;
 import upmc.ri.struct.training.ITrainer;
@@ -24,7 +25,9 @@ public class MulticlassClassif {
 		DataSet<double[], String> dSet = VisualIndexes.buildDataset(input_dim);
 		
 		System.out.println("init MultiClass Instantiation");
-		IStructInstantiation<double[],String> Inst = new MultiClass();
+		//-----------------------------------------------------------------------------------------
+		//IStructInstantiation<double[],String> Inst = new MultiClass();
+		IStructInstantiation<double[],String> Inst = new MultiClassHier();
 		
 		System.out.println("init model");
 		IStructModel<double[],String> model = new LinearStructModel_Ex<double[], String>(input_dim,Inst);
