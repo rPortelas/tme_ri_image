@@ -7,9 +7,9 @@ import upmc.ri.struct.*;
 import upmc.ri.utils.*;
 import java.util.ArrayList;
 
-public class MainImage {
+public class VisualIndexes {
 
-	public static void main(String[] args) {
+	public static DataSet<double[], String> buildDataset(int pca_dim) {
 		// TODO Auto-generated method stub
 		Set<String> labels = ImageNetParser.classesImageNet();			
 		 
@@ -51,10 +51,11 @@ public class MainImage {
 				cpt+=1;
 			}
 		}
-		//create dataset then run PCA on it to reduce sample dimension to 250 components
+		//create dataset then run PCA on it to reduce sample dimension to pca_dim components
 		DataSet<double[],String> dSet = new DataSet<double[],String>(listTrain, listTest);
-		PCA.computePCA(dSet , 250);
+		PCA.computePCA(dSet , pca_dim);
 		
+		return dSet;	
 	}
 
 }
