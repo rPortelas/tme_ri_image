@@ -12,7 +12,7 @@ public class MainImage {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Set<String> labels = ImageNetParser.classesImageNet();			
-		
+		 
 		List <STrainingSample<double[],String>> listTrain = new ArrayList<STrainingSample<double[],String>>();
 		List <STrainingSample<double[],String>> listTest = new ArrayList<STrainingSample<double[],String>>();
 		

@@ -3,16 +3,18 @@ package upmc.ri.struct.model;
 import upmc.ri.struct.instantiation.IStructInstantiation;
 
 public abstract class LinearStructModel<X, Y> implements IStructModel<X, Y> {
-	IStructInstantiation<X, Y> SInst;
+	IStructInstantiation<X, Y> Inst;
 	//what about this instantiation method ?
-	double[] params;
+	double[] w;
+	
+	public abstract IStructInstantiation<X, Y> instantiation();
 	
 	public double[] getParameters() {
-		return params;
+		return w;
 	}
 	
 	public LinearStructModel(int dim_params) {
-		//what should i do ?
+		this.w = new double[dim_params];
 	}
 	
 	
