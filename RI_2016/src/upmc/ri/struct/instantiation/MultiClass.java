@@ -1,5 +1,6 @@
 package upmc.ri.struct.instantiation;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,10 +20,13 @@ public class MultiClass implements IStructInstantiation<double[], String> {
 		this.set.add("wood-frog");
 		this.set.add("tree-frog");
 		this.set.add("european_fire_salamander");
-		
-		int cpt = 0;
-		for (String y : this.set)
-			map.put(y, cpt++);
+
+		this.map = new HashMap<String,Integer>();
+		int y_ind = 0;
+		for (String y : this.set) {
+			map.put(y, y_ind);
+			y_ind++;
+		}
 	}
 
 	public double[] psi(double[] x, String y) {
@@ -34,7 +38,7 @@ public class MultiClass implements IStructInstantiation<double[], String> {
 		//now add x into y's part of psi
 		int y_ind = this.map.get(y);
 		
-		for(int i = y_ind * input_dim; i < psi.length; i++) {
+		for(int i = y_ind * input_dim; i < (y_ind * input_dim) + input_dim; i++) {
 			psi[i] = x[i - (y_ind * input_dim)];
 		}
 		return psi;
