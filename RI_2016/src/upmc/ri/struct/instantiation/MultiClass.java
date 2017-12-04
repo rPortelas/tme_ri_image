@@ -1,9 +1,17 @@
 package upmc.ri.struct.instantiation;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import static java.lang.Math.toIntExact;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class MultiClass implements IStructInstantiation<double[], String> {
 	Set<String> set;
@@ -27,6 +35,32 @@ public class MultiClass implements IStructInstantiation<double[], String> {
 			map.put(y, y_ind);
 			y_ind++;
 		}
+	}
+	
+	public double[][] confusionMatrix(List<String> y_hat_list,List<String> y_list) {
+		int class_nb = this.set.size();
+		double[][] mat_conf = new double[class_nb][class_nb];
+		Map<String, Long> counts = y_list.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+	
+		//String[] classes = this.set.toArray(new String[class_nb]);
+		String[] classes = {"taxi","ambulance","minivan","acoustic_guitar","electric_guitar","harp","wood-frog","tree-frog","european_fire_salamander"};
+		
+		//For each class i
+		for(int i=0;i<class_nb;i++) {
+			int index = y_list.indexOf(classes[i]);
+			int len = toIntExact(counts.get(classes[i]));
+			
+			//For each class j
+			for(int j=0;j<class_nb;j++) {
+				double nb_j_predictions = Collections.frequency(y_hat_list.subList(index, index + len), classes[j]);
+				mat_conf[i][j] = round(nb_j_predictions / len,3);
+				
+				
+			}
+		}
+		System.out.println(Arrays.toString(classes));
+		System.out.println(Arrays.deepToString(mat_conf).replace("], ","]\n"));
+		return mat_conf;
 	}
 
 	public double[] psi(double[] x, String y) {
@@ -55,5 +89,13 @@ public class MultiClass implements IStructInstantiation<double[], String> {
 
 	public Set<String> enumerateY() {
 		return this.set;
+	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
 	}
 }

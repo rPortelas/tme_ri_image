@@ -1,5 +1,9 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import upmc.ri.struct.DataSet;
 import upmc.ri.struct.Evaluator;
+import upmc.ri.struct.STrainingSample;
 import upmc.ri.struct.instantiation.IStructInstantiation;
 import upmc.ri.struct.instantiation.MultiClass;
 import upmc.ri.struct.model.IStructModel;
@@ -35,6 +39,19 @@ public class MulticlassClassif {
 		ITrainer<double[],String> Trainer = new SGDTrainer<double[],String>();
 		Trainer.train(dSet.listtrain,model,epochs_nb,lr,regul,Ev);
 		
+		System.out.println("Compute confusion matrix");
+		Ev.evaluate();
+		MultiClass MC = (MultiClass) Inst;
+		
+		List<String> test_y = new ArrayList<String>(dSet.listtest.size());
+		for (STrainingSample<double[], String> test_sample : dSet.listtest) {
+			test_y.add(test_sample.output);
+		}
+		
+		//SHOULD RETURN 1
+		//double[][] mat_conf = MC.confusionMatrix(test_y,test_y);
+		
+		double[][] mat_conf = MC.confusionMatrix(Ev.getPred_test(),test_y);
 		
 
 	}

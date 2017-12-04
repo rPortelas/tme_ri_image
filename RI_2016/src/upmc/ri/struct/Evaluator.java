@@ -11,6 +11,14 @@ public class Evaluator<X,Y> {
 	//private IStructInstantiation <X,Y> type;
 	private IStructModel<X,Y> model;
 	
+	public List<Y> getPred_train() {
+		return pred_train;
+	}
+
+	public List<Y> getPred_test() {
+		return pred_test;
+	}
+
 	private List<Y> pred_train;
 	private List<Y> pred_test;
 	private double err_train;
