@@ -8,4 +8,5 @@ public interface IStructModel<X,Y> {
 	public Y lai(STrainingSample<X,Y> ts);
 	public IStructInstantiation <X,Y> instantiation();
 	public double[] getParameters();
+	public void setInst(IStructInstantiation<X,Y> Inst);
 }

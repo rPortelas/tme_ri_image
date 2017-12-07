@@ -51,5 +51,10 @@ public class LinearStructModel_Ex<X, Y> extends LinearStructModel<X, Y> {
 		}
 		assert(best_score != (-1 * Double.MAX_VALUE));
 		return best_y;
+	}
+
+	@Override
+	public void setInst(IStructInstantiation<X,Y> Inst) {
+		this.Inst = Inst;
 	}	
 }

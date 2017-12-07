@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.MatrixVisualization;
+
 import static java.lang.Math.toIntExact;
 
 import java.math.BigDecimal;
@@ -58,8 +62,24 @@ public class MultiClass implements IStructInstantiation<double[], String> {
 				
 			}
 		}
+		
+		System.out.println("Textual version of the confusion matrix:");
 		System.out.println(Arrays.toString(classes));
 		System.out.println(Arrays.deepToString(mat_conf).replace("], ","]\n"));
+		
+		//add espilon for display purposes
+		for (int i = 0; i < mat_conf.length; i++) {
+		    for (int j = 0; j < mat_conf[0].length; j++) {
+		    	if (mat_conf[i][j] == 0)
+		    		mat_conf[i][j] += 10e-6;
+		    }
+		}
+		
+		System.out.println("Ignore the following textual matrix, it is an output of the plotting library");
+		DenseMatrix64F conf = new DenseMatrix64F(mat_conf);
+		MatrixVisualization.show(conf, "Matrice de confusion");
+		
+		
 		return mat_conf;
 	}
 
