@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import upmc.ri.struct.STrainingSample;
 import upmc.ri.struct.instantiation.IStructInstantiation;
+import upmc.ri.struct.ranking.RankingFunctions;
 import upmc.ri.struct.ranking.RankingOutput;
 import upmc.ri.utils.VectorOperations;
 
@@ -41,8 +42,7 @@ public class RankingStructModel extends LinearStructModel<List<double[]>,Ranking
 
 	@Override
 	public RankingOutput lai(STrainingSample<List<double[]>, RankingOutput> ts) {
-		// TODO Auto-generated method stub
-		return null;
+		return RankingFunctions.loss_augmented_inference(ts, this.getParameters());
 	}
 
 	@Override

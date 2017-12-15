@@ -8,50 +8,51 @@ import upmc.ri.struct.DataSet;
 import upmc.ri.struct.Evaluator;
 import upmc.ri.struct.STrainingSample;
 import upmc.ri.struct.instantiation.IStructInstantiation;
-import upmc.ri.struct.instantiation.MultiClass;
-import upmc.ri.struct.instantiation.MultiClassHier;
+import upmc.ri.struct.instantiation.RankingInstantiation;
 import upmc.ri.struct.model.IStructModel;
-import upmc.ri.struct.model.LinearStructModel_Ex;
+import upmc.ri.struct.model.RankingStructModel;
+import upmc.ri.struct.ranking.RankingFunctions;
+import upmc.ri.struct.ranking.RankingOutput;
 import upmc.ri.struct.training.ITrainer;
 import upmc.ri.struct.training.SGDTrainer;
+import upmc.ri.utils.Drawing;
 
-public class MulticlassClassif {
+public class Ranking {
 	
 	public static int input_dim = 250;
 	public static double regul = 10e-6;
-	public static double lr = 10e-2;
-	public static int epochs_nb = 100;
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!! CHOOSE HERE TO SWITCH HIER / 01 LOSS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	public static boolean use_hier_model = false;
+	public static double lr = 10;
+	public static int epochs_nb = 50;
 	
 	
 	public static void main(String[] args) {
 		System.out.println("load data & run PCA");
-		DataSet<double[], String> dSet = VisualIndexes.buildDataset(input_dim);
+		DataSet<double[], String> classif_dSet = VisualIndexes.buildDataset(input_dim);
+		//Convert to ranking data
+		DataSet<List<double[]>, RankingOutput> dSet = RankingFunctions.convertClassif2Ranking(classif_dSet, "taxi");
 		
-		System.out.println("init MultiClass Instantiation");
+		System.out.println("init Ranking Instantiation");
 		
-		IStructInstantiation<double[],String> Inst;
-		if(use_hier_model) {
-			Inst = new MultiClassHier();
-		}
-		else {
-			Inst = new MultiClass();
-		}
+		IStructInstantiation<List<double[]>, RankingOutput> Inst;
+		Inst = new RankingInstantiation();
 		
 		System.out.println("init model");
-		IStructModel<double[],String> model = new LinearStructModel_Ex<double[], String>(input_dim,Inst);
+		IStructModel<List<double[]>, RankingOutput> model = new RankingStructModel(input_dim, Inst);
 		
 		System.out.println("create Evaluator");
-		Evaluator<double[],String> Ev = new Evaluator<double[], String>();
+		Evaluator<List<double[]>, RankingOutput> Ev = new Evaluator<List<double[]>, RankingOutput>();
 		Ev.setListtrain(dSet.listtrain);
 		Ev.setListtest(dSet.listtest);
 		Ev.setModel(model);
 		
 		System.out.println("train model");
-		ITrainer<double[],String> Trainer = new SGDTrainer<double[],String>();
+		ITrainer<List<double[]>, RankingOutput> Trainer = new SGDTrainer<List<double[]>, RankingOutput>();
 		Trainer.train(dSet.listtrain,model,epochs_nb,lr,regul,Ev);
 		
+		RankingOutput y_train_pred = model.predict(dSet.listtrain.get(0));
+		double[][] rp = RankingFunctions.recalPrecisionCurve(y_train_pred);
+		Drawing.traceRecallPrecisionCurve(dSet.listtrain.get(0).output.getNbPlus(), rp);
+		/*
 		//System.out.println("Compute confusion matrix");
 		Ev.evaluate();
 		MultiClass MC = (MultiClass) Inst;
@@ -85,7 +86,7 @@ public class MulticlassClassif {
 		Ev.setModel(model);
 		Ev.evaluate();
 		System.out.println("Mean error on test set using 0-1 loss = " + Ev.getErr_test());
-		
+		*/
 
 	}
 

@@ -3,6 +3,9 @@ import upmc.ri.struct.*;
 import upmc.ri.struct.model.*;
 import upmc.ri.struct.instantiation.*;
 import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -24,6 +27,19 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 	int N; //data size
 	double[] w;
 	
+	boolean save_loss = true;
+	
+	public static void write (String filename, double[]x) throws IOException{
+		  BufferedWriter outputWriter = null;
+		  outputWriter = new BufferedWriter(new FileWriter(filename));
+		  for (int i = 0; i < x.length; i++) {
+		    outputWriter.write(Double.toString(x[i]));
+		    outputWriter.newLine();
+		  }
+		  outputWriter.flush();  
+		  outputWriter.close();  
+	}
+		
 	
 	public void train(List<STrainingSample<X, Y>> lts, IStructModel<X, Y> model, int epochs_nb, double learning_rate, double regul_rate, Evaluator<X,Y> Ev) {
 		this.eta = learning_rate;
@@ -38,8 +54,11 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		Random rand = new Random();
 		
 		this.w = model.getParameters();
-		this.N = lts.size(); //size of train dataset, maybe ?
+		this.N = lts.size();
 		System.out.println(N);
+		//init array to store losses
+		double[] train_losses = new double[this.T];
+		double[] test_losses = new double[this.T];
 
 		for(int e = 0; e < this.T; e++) {
 			for (int it = 0; it < N; it++) {
@@ -64,7 +83,20 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 			System.out.println("Epoch: " + e);
 			System.out.println("Loss on train = " + Ev.getErr_train());
 			System.out.println("Loss on test = " + Ev.getErr_test());
+			train_losses[e] = Ev.getErr_train();
+			test_losses[e] = Ev.getErr_test();
 		}
+		//save loss evolution for display purposes
+		try {
+			if (save_loss) {
+				SGDTrainer.write("train_loss_array.txt",train_losses);
+				SGDTrainer.write("test_loss_array.txt",test_losses);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	//computes convex_loss as defined is equation (1) of tme's pdf
