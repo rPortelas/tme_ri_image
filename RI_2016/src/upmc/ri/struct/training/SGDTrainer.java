@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 
+import javax.crypto.spec.PSource.PSpecified;
+
 import upmc.ri.utils.*;
 import upmc.ri.struct.STrainingSample;
 import upmc.ri.struct.model.IStructModel;
@@ -59,6 +61,11 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		//init array to store losses
 		double[] train_losses = new double[this.T];
 		double[] test_losses = new double[this.T];
+		
+		double [] psi_xi_yi = null;
+		if(N==1) {//Case of ranking, lets precompute psi(x_i,y_i) to save time
+			psi_xi_yi = Inst.psi(lts.get(0).input, lts.get(0).output);
+		}
 
 		for(int e = 0; e < this.T; e++) {
 			for (int it = 0; it < N; it++) {
@@ -70,8 +77,13 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 				Y y_hat = model.lai(TSample);
 
 				//compute grad
-				double[] grad = VectorOperations.substract(Inst.psi(x_i, y_hat), Inst.psi(x_i, y_i));
-				
+				double[] grad;
+				if (N == 1) { //Case of ranking, use precomputed psi xi yi since only 1 example
+					grad = VectorOperations.substract(Inst.psi(x_i, y_hat), psi_xi_yi );
+				}
+				else {
+					grad = VectorOperations.substract(Inst.psi(x_i, y_hat), Inst.psi(x_i, y_i));
+				}
 				//update w
 				for (int k = 0; k < this.w.length; k++) {
 					this.w[k] = this.w[k] - this.eta * (this.lambda * this.w[k] + grad[k]);
@@ -80,7 +92,7 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 			//Eval model
 			//double loss = convex_loss(TSample, y_hat, this.w, Inst, model);
 			Ev.evaluate();
-			System.out.println("Epoch: " + e);
+			System.out.println("Epoch: " + (e+1));
 			System.out.println("Loss on train = " + Ev.getErr_train());
 			System.out.println("Loss on test = " + Ev.getErr_test());
 			train_losses[e] = Ev.getErr_train();

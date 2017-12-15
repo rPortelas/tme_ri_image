@@ -47,7 +47,7 @@ public class RankingStructModel extends LinearStructModel<List<double[]>,Ranking
 
 	@Override
 	public void setInst(IStructInstantiation<List<double[]>, RankingOutput> Inst) {
-		// TODO Auto-generated method stub
+		this.Inst = Inst;
 		
 	}
 	

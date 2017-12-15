@@ -1,8 +1,12 @@
+import java.awt.Panel;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JFrame;
 
 import upmc.ri.struct.DataSet;
 import upmc.ri.struct.Evaluator;
@@ -29,16 +33,16 @@ public class Ranking {
 		System.out.println("load data & run PCA");
 		DataSet<double[], String> classif_dSet = VisualIndexes.buildDataset(input_dim);
 		//Convert to ranking data
-		DataSet<List<double[]>, RankingOutput> dSet = RankingFunctions.convertClassif2Ranking(classif_dSet, "taxi");
+		DataSet<List<double[]>, RankingOutput> dSet = RankingFunctions.convertClassif2Ranking(classif_dSet, "ambulance");
 		
 		System.out.println("init Ranking Instantiation");
 		
 		IStructInstantiation<List<double[]>, RankingOutput> Inst;
 		Inst = new RankingInstantiation();
-		
+		System.out.println(Inst);
 		System.out.println("init model");
 		IStructModel<List<double[]>, RankingOutput> model = new RankingStructModel(input_dim, Inst);
-		
+		System.out.println(model);
 		System.out.println("create Evaluator");
 		Evaluator<List<double[]>, RankingOutput> Ev = new Evaluator<List<double[]>, RankingOutput>();
 		Ev.setListtrain(dSet.listtrain);
@@ -49,44 +53,35 @@ public class Ranking {
 		ITrainer<List<double[]>, RankingOutput> Trainer = new SGDTrainer<List<double[]>, RankingOutput>();
 		Trainer.train(dSet.listtrain,model,epochs_nb,lr,regul,Ev);
 		
+		//Evaluate prediction on train
 		RankingOutput y_train_pred = model.predict(dSet.listtrain.get(0));
+		
+		System.out.println("train Average Precision: ");
+		System.out.println(RankingFunctions.averagePrecision(y_train_pred));
+		
 		double[][] rp = RankingFunctions.recalPrecisionCurve(y_train_pred);
-		Drawing.traceRecallPrecisionCurve(dSet.listtrain.get(0).output.getNbPlus(), rp);
-		/*
-		//System.out.println("Compute confusion matrix");
-		Ev.evaluate();
-		MultiClass MC = (MultiClass) Inst;
-			
+		BufferedImage bIm = Drawing.traceRecallPrecisionCurve(dSet.listtrain.get(0).output.getNbPlus(), rp);
 		
+		JFrame frame = new JFrame("Courbe Recall-Precision en Train");
+		Panel panel = new ImageDisplay(bIm);
+		frame.getContentPane().add(panel);
+		frame.setSize(500, 500);
+		frame.setVisible(true);
 		
-		List<String> test_y = new ArrayList<String>(dSet.listtest.size());
-		for (STrainingSample<double[], String> test_sample : dSet.listtest) {
-			test_y.add(test_sample.output);
-		}
+		//Evaluate prediction on test
+		RankingOutput y_test_pred = model.predict(dSet.listtest.get(0));
 		
-		double[][] mat_conf = MC.confusionMatrix(Ev.getPred_test(),test_y);
+		System.out.println("test Average Precision: ");
+		System.out.println(RankingFunctions.averagePrecision(y_test_pred));
 		
-		//get mean error on test using 0-1 and hierarchical models
-		IStructInstantiation<double[],String> Inst_test_hier = new MultiClassHier();
-		IStructInstantiation<double[],String> Inst_test_01 = new MultiClass();
+		double[][] rp_test = RankingFunctions.recalPrecisionCurve(y_test_pred);
+		BufferedImage bIm_test = Drawing.traceRecallPrecisionCurve(dSet.listtest.get(0).output.getNbPlus(), rp_test);
 		
-		if(use_hier_model) {
-			System.out.println("Using a SVM trained with hierarchical loss: ");
-		}
-		else {
-			System.out.println("Using a SVM trained with 0-1 loss: ");
-		}
-		
-		model.setInst(Inst_test_hier);
-		Ev.setModel(model);
-		Ev.evaluate();
-		System.out.println("Mean error on test set using hierarchical loss = " + Ev.getErr_test());
-		
-		model.setInst(Inst_test_01);
-		Ev.setModel(model);
-		Ev.evaluate();
-		System.out.println("Mean error on test set using 0-1 loss = " + Ev.getErr_test());
-		*/
+		JFrame frame_test = new JFrame("Courbe Recall-Precision en Test");
+		Panel panel_test = new ImageDisplay(bIm_test);
+		frame_test.getContentPane().add(panel_test);
+		frame_test.setSize(500, 500);
+		frame_test.setVisible(true);
 
 	}
 
