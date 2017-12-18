@@ -56,5 +56,10 @@ public class LinearStructModel_Ex<X, Y> extends LinearStructModel<X, Y> {
 	@Override
 	public void setInst(IStructInstantiation<X,Y> Inst) {
 		this.Inst = Inst;
+	}
+
+	@Override
+	public void setParameters(double[] params) {
+		this.w = params;
 	}	
 }

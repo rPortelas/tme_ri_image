@@ -51,5 +51,10 @@ public class RankingStructModel extends LinearStructModel<List<double[]>,Ranking
 		
 	}
 	
+	@Override
+	public void setParameters(double[] params) {
+		this.w = params;
+	}	
+	
 
 }

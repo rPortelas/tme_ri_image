@@ -57,10 +57,13 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 		
 		this.w = model.getParameters();
 		this.N = lts.size();
-		System.out.println(N);
+		//System.out.println(N);
 		//init array to store losses
 		double[] train_losses = new double[this.T];
 		double[] test_losses = new double[this.T];
+		
+		//Store params at each training epoch to use best (regarding test set error) in final model
+		List <double[]> params = new ArrayList<double[]>(this.T);
 		
 		double [] psi_xi_yi = null;
 		if(N==1) {//Case of ranking, lets precompute psi(x_i,y_i) to save time
@@ -92,12 +95,16 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 			//Eval model
 			//double loss = convex_loss(TSample, y_hat, this.w, Inst, model);
 			Ev.evaluate();
-			System.out.println("Epoch: " + (e+1));
-			System.out.println("Loss on train = " + Ev.getErr_train());
-			System.out.println("Loss on test = " + Ev.getErr_test());
+			//System.out.println("Epoch: " + (e+1));
+			//System.out.println("Loss on train = " + Ev.getErr_train());
+			//System.out.println("Loss on test = " + Ev.getErr_test());
 			train_losses[e] = Ev.getErr_train();
 			test_losses[e] = Ev.getErr_test();
+			
+			//store model's current w
+			params.add(w.clone());
 		}
+		
 		//save loss evolution for display purposes
 		try {
 			if (save_loss) {
@@ -109,6 +116,16 @@ public class SGDTrainer<X, Y> implements ITrainer<X, Y> {
 			e.printStackTrace();
 		}
 		
+		//return model with best parameters on test set
+		int min_test_err_index = 0;
+		for (int i=0;i<this.T;i++) {
+			min_test_err_index = test_losses[i] < test_losses[min_test_err_index] ? i : min_test_err_index;
+		}
+		model.setParameters(params.get(min_test_err_index));
+		System.out.println("Best model obtained after: " + (min_test_err_index+1) + " epochs of training");
+		Ev.evaluate();
+		System.out.println("Loss on train = " + Ev.getErr_train());
+		System.out.println("Loss on test = " + Ev.getErr_test());
 	}
 	
 	//computes convex_loss as defined is equation (1) of tme's pdf
