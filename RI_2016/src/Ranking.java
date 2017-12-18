@@ -1,6 +1,7 @@
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import upmc.ri.struct.DataSet;
@@ -102,6 +104,18 @@ public class Ranking {
 			frame_test.getContentPane().add(panel_test);
 			frame_test.setSize(500, 500);
 			frame_test.setVisible(true);
+			
+			//save RP plots
+			File train_rp = new File("Train-Recall-Prec-" + query);
+			File test_rp = new File("Test-Recall-Prec-" + query);
+			try {
+				ImageIO.write(bIm, "png", train_rp);
+				ImageIO.write(bIm_test, "png", test_rp);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 
 		}
 		
