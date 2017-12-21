@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +33,10 @@ public class Ranking {
 	public static double lr = 10;
 	public static int epochs_nb = 50;
 	
-	//CHOOSE THE LIST OF QUERIES YOU WANT TO RUN HERE
+	// !!!!!! CHOOSE THE LIST OF QUERIES YOU WANT TO RUN HERE !!!!!!
+	
 	public static String[] queries = {"taxi","ambulance","minivan","acoustic_guitar","electric_guitar","harp","wood-frog","tree-frog","european_fire_salamander"};
-	//public static String[] queries = {"acoustic_guitar","electric_guitar","harp","wood-frog","tree-frog","european_fire_salamander"};
-	//public static String[] queries = {"european_fire_salamander"};
+	//public static String[] queries = {"acoustic_guitar"};
 	
 	public static void main(String[] args) {
 
@@ -129,7 +130,7 @@ public class Ranking {
 		mean_AP_test = mean_AP_test / all_AP_test.size();
 		mean_AP_train = mean_AP_train / all_AP_train.size();
 		
-		System.out.println("Mean AP pour la liste de queries suivante: " + queries);
+		System.out.println("Mean AP pour la liste de queries suivante: " + Arrays.toString(queries));
 		System.out.println("moyenne train AP = " + mean_AP_train + ", moyenne test AP" + mean_AP_test);
 		
 		
