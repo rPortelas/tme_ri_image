@@ -2,9 +2,9 @@
 
 To launch the project:
 
-1 - Load in eclipse as Java project ("Import existing project into workspace")
+1 - Load in eclipse as Java project ("Import existing project into workspace" -> folder RI_2016/)
 
-2 - add all the libraries in lib folder as external libraries to project's build path
+2 - add all the libraries in lib folder (add as external JARs) to project's build path
 
 3 - set up path_to_bows variable in Ranking.java and MultiClassClassif (absolute file path to sbow folder)
 
