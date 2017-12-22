@@ -21,13 +21,17 @@ public class MulticlassClassif {
 	public static double regul = 10e-6;
 	public static double lr = 10e-2;
 	public static int epochs_nb = 100;
+	
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!! CHOOSE HERE TO SWITCH HIER / 01 LOSS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	public static boolean use_hier_model = false;
+	
+	// !!!!!! SET UP ABSOLUTE FILE PATH TO SBOW FOLDER
+	public static String path_to_bows = "/home/rportelas/Documents/RI/tme_ri_image/sbow/";
 	
 	
 	public static void main(String[] args) {
 		System.out.println("load data & run PCA");
-		DataSet<double[], String> dSet = VisualIndexes.buildDataset(input_dim);
+		DataSet<double[], String> dSet = VisualIndexes.buildDataset(input_dim,path_to_bows);
 		
 		System.out.println("init MultiClass Instantiation");
 		

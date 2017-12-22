@@ -14,15 +14,12 @@ import java.util.Arrays;
 
 public class VisualIndexes {
 
-	public static DataSet<double[], String> buildDataset(int pca_dim) {
+	public static DataSet<double[], String> buildDataset(int pca_dim, String path_to_bows) {
 		// TODO Auto-generated method stub
 		Set<String> labels = ImageNetParser.classesImageNet();
 		 
 		List <STrainingSample<double[],String>> listTrain = new ArrayList<STrainingSample<double[],String>>();
 		List <STrainingSample<double[],String>> listTest = new ArrayList<STrainingSample<double[],String>>();
-		
-		//String path_to_bows = "/home/kalifou/Documents/m2/ri/tmes/tme_ri_image/sbow/";
-		String path_to_bows = "/home/rportelas/Documents/RI/tme_ri_image/sbow/";
 		
 		// iterate over set of labels
 		Iterator<String> it = labels.iterator();

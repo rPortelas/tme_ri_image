@@ -34,14 +34,15 @@ public class Ranking {
 	public static int epochs_nb = 50;
 	
 	// !!!!!! CHOOSE THE LIST OF QUERIES YOU WANT TO RUN HERE !!!!!!
-	
 	public static String[] queries = {"taxi","ambulance","minivan","acoustic_guitar","electric_guitar","harp","wood-frog","tree-frog","european_fire_salamander"};
-	//public static String[] queries = {"acoustic_guitar"};
+	
+	// !!!!!! SET UP ABSOLUTE FILE PATH TO SBOW FOLDER
+	public static String path_to_bows = "/home/rportelas/Documents/RI/tme_ri_image/sbow/";
 	
 	public static void main(String[] args) {
 
 		System.out.println("load data & run PCA");
-		DataSet<double[], String> classif_dSet = VisualIndexes.buildDataset(input_dim);
+		DataSet<double[], String> classif_dSet = VisualIndexes.buildDataset(input_dim,path_to_bows);
 		
 		List<Double> all_AP_train = new ArrayList<Double>(queries.length);
 		List<Double> all_AP_test = new ArrayList<Double>(queries.length);
